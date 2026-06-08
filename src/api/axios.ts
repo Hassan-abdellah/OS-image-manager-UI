@@ -1,5 +1,5 @@
 import { authPaths } from "@/data/routePaths";
-import axios, { type AxiosInstance } from "axios";
+import axios, { AxiosError, type AxiosInstance } from "axios";
 
 // Factory — call this inside hooks/components where you have the token
 export const createAxiosInstance = (token: string | null): AxiosInstance => {
@@ -15,10 +15,12 @@ export const createAxiosInstance = (token: string | null): AxiosInstance => {
 
   instance.interceptors.response.use(
     (res) => res.data,
-    (error) => {
+    (error: AxiosError) => {
       if (error.response?.status === 401) {
-        // e.g. redirect to sign-in
-        window.open(authPaths.login, "_self");
+        const isOnAuthPage = window.location.pathname.includes(authPaths.login);
+        if (!isOnAuthPage) {
+          window.location.href = authPaths.login;
+        }
       }
       return Promise.reject(error);
     },
