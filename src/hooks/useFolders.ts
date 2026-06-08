@@ -11,8 +11,8 @@ import { getFolders, getRootFolder } from "@/api/folder";
 
 // Centralized query key factory
 export const foldersKeys = {
-  base: ["folders"] as const,
-  all: (params?: paramsType) => [...foldersKeys.base, params] as const,
+  base: () => ["folders"] as const,
+  all: (params?: paramsType) => [...foldersKeys.base(), params] as const,
 };
 
 export const useRootFolder = () => {
@@ -22,9 +22,10 @@ export const useRootFolder = () => {
   const query = useQuery<{
     folder: folderData;
   }>({
-    queryKey: foldersKeys.base,
+    queryKey: foldersKeys.base(),
     queryFn: async () => getRootFolder(await getApi()),
     enabled: isLoaded && !!isSignedIn,
+    staleTime: 1000 * 60 * 5, // ✅ add this
   });
 
   return {
