@@ -4,10 +4,13 @@ import { Link } from "react-router";
 
 const Navbar = () => {
   return (
-    <header className="bg-gray-100 sticky z-50 top-0 left-0 right-0 w-full backdrop-blur-3xl">
-      <nav className="max-w-7xl mx-auto flex items-center justify-between">
+    <header className="bg-deep-space-blue text-white sticky z-50 top-0 left-0 right-0 w-full h-(--nav-height) backdrop-blur-3xl flex items-center">
+      <nav className="container flex items-center justify-between">
         {/* logo */}
-        <h2>Logo</h2>
+
+        <Link to={"/"} className="text-xl">
+          ImgSH
+        </Link>
 
         {/* links */}
 
