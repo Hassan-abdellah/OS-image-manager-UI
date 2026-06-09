@@ -6,7 +6,7 @@ const PublicLayout = () => {
   return (
     <Fragment>
       <Navbar />
-      <main>
+      <main className="page-height">
         <Outlet />
       </main>
     </Fragment>

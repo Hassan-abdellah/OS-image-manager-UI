@@ -35,12 +35,16 @@ export const useRootFolder = () => {
     isError: query.isError,
   };
 };
-export const useFolders = (params: paramsType = {}) => {
+export const useFolders = (
+  params: paramsType = {},
+  isEnabled: boolean = true,
+) => {
   const { isSignedIn, isLoaded } = useAuth();
   const { getApi } = useApi();
   // Stabilize params so the queryKey doesn't change every render
   const query = useInfiniteQuery<{
-    folders: string[];
+    folders: folderData[];
+    images: string[];
     pagination?: paginationMeta;
   }>({
     queryKey: foldersKeys.all(params),
@@ -56,11 +60,12 @@ export const useFolders = (params: paramsType = {}) => {
       return page < totalPages ? page + 1 : undefined;
     },
     initialPageParam: 1,
-    enabled: isLoaded && !!isSignedIn,
+    enabled: isLoaded && !!isSignedIn && isEnabled,
   });
 
   return {
-    data: query.data?.pages.flatMap((page) => page.folders) ?? [],
+    folders: query.data?.pages.flatMap((page) => page.folders) ?? [],
+    images: query.data?.pages.flatMap((page) => page.images) ?? [],
     pagination: query.data?.pages?.at(-1)?.pagination,
     isLoading: query.isLoading,
     error: query.error,

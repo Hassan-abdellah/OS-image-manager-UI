@@ -22,13 +22,14 @@ export const getFolders = async (
   api: AxiosInstance,
   params?: paramsType | undefined,
 ): Promise<{
-  folders: string[];
+  folders: folderData[];
+  images: string[];
   pagination?: paginationMeta;
 }> => {
   const res: foldersResponse = await api.get(FOLDERSURL, { params });
-  console.log("res", res);
   return {
-    folders: res.folders,
-    pagination: res.pagination,
+    folders: res.folders.folders,
+    pagination: res.folders.pagination,
+    images: res.images.images,
   };
 };
