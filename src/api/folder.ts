@@ -1,5 +1,5 @@
 import { type AxiosInstance } from "axios";
-import { FOLDERSURL, IMAGESURL, ROOTFOLDERURL } from "./url_helper";
+import { FOLDERSURL, ROOTFOLDERURL } from "./url_helper";
 import type {
   folderData,
   foldersResponse,
@@ -55,12 +55,4 @@ export const uploadFolderImages = (
       "Content-Type": "multipart/form-data",
     },
   });
-};
-
-// delete image
-export const deleteImage = (
-  api: AxiosInstance,
-  imageId: string,
-): Promise<void> => {
-  return api.delete(`${IMAGESURL}/${imageId}`);
 };

@@ -15,16 +15,12 @@ const SingleFolderPage = () => {
       {isLoading ? (
         <FoldersListLoader />
       ) : (
-        <>
+        <div className="flex flex-col gap-8">
+          {folderId ? <UploadImagesToFolderFom folderId={folderId} /> : null}
           {folders.length > 0 ? (
-            <div className="flex flex-col gap-8">
-              {folderId ? (
-                <UploadImagesToFolderFom folderId={folderId} />
-              ) : null}
-              <FoldersGrid folders={folders} folderImages={images} />
-            </div>
+            <FoldersGrid folders={folders} folderImages={images} />
           ) : null}
-        </>
+        </div>
       )}
     </section>
   );

@@ -13,12 +13,7 @@ import type {
   paginationMeta,
   paramsType,
 } from "@/types/apiDataTypes";
-import {
-  deleteImage,
-  getFolders,
-  getRootFolder,
-  uploadFolderImages,
-} from "@/api/folder";
+import { getFolders, getRootFolder, uploadFolderImages } from "@/api/folder";
 
 // Centralized query key factory
 export const foldersKeys = {
@@ -106,25 +101,6 @@ export const useUploadFolderImages = () => {
 
   return {
     uploadImages: mutation.mutateAsync,
-    isPending: mutation.isPending,
-    error: mutation.error,
-    isError: mutation.isError,
-  };
-};
-
-export const useDeleteImage = () => {
-  const queryClient = useQueryClient();
-  const { getApi } = useApi();
-
-  const mutation = useMutation<void, Error, string>({
-    mutationFn: async (imageId: string) => deleteImage(await getApi(), imageId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: foldersKeys.base() });
-    },
-  });
-
-  return {
-    deleteImage: mutation.mutateAsync,
     isPending: mutation.isPending,
     error: mutation.error,
     isError: mutation.isError,

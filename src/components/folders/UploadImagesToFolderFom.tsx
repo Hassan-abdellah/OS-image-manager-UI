@@ -7,7 +7,7 @@ import { UploadIcon } from "lucide-react";
 
 const UploadImagesToFolderFom = ({ folderId }: { folderId: string }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { uploadImages, isPending, error, isError } = useUploadFolderImages();
+  const { uploadImages, isPending } = useUploadFolderImages();
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -21,7 +21,6 @@ const UploadImagesToFolderFom = ({ folderId }: { folderId: string }) => {
       console.log("error", error);
     }
   };
-  console.log("error", isError ? error : "");
   return (
     <form className="flex items-center gap-2" onSubmit={handleUpload}>
       <UploadInput ref={fileInputRef} />
