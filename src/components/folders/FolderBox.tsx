@@ -6,7 +6,7 @@ const FolderBox = ({ folder }: { folder: folderData }) => {
   return (
     <Link
       to={`/folders/${folder.id}`}
-      className="flex flex-col gap-1 cursor-pointer"
+      className="flex flex-col gap-1 rounded-lg max-w-37.5"
     >
       <FoldersIcon className="w-20 h-20" />
       <h5>{folder.name}</h5>

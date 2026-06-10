@@ -1,13 +1,24 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useApi } from "./useApi";
 import { useAuth } from "@clerk/react";
 
 import type {
   folderData,
+  imageData,
   paginationMeta,
   paramsType,
 } from "@/types/apiDataTypes";
-import { getFolders, getRootFolder } from "@/api/folder";
+import {
+  deleteImage,
+  getFolders,
+  getRootFolder,
+  uploadFolderImages,
+} from "@/api/folder";
 
 // Centralized query key factory
 export const foldersKeys = {
@@ -44,7 +55,7 @@ export const useFolders = (
   // Stabilize params so the queryKey doesn't change every render
   const query = useInfiniteQuery<{
     folders: folderData[];
-    images: string[];
+    images: imageData[];
     pagination?: paginationMeta;
   }>({
     queryKey: foldersKeys.all(params),
@@ -73,5 +84,49 @@ export const useFolders = (
     hasNextPage: query.hasNextPage,
     isFetchingNextPage: query.isFetchingNextPage,
     fetchNextPage: query.fetchNextPage,
+  };
+};
+
+export const useUploadFolderImages = () => {
+  const { getApi } = useApi();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async ({
+      images,
+      folderId,
+    }: {
+      images: FileList;
+      folderId: string;
+    }) => uploadFolderImages(await getApi(), { folderId, images }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: foldersKeys.base() });
+    },
+  });
+
+  return {
+    uploadImages: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    error: mutation.error,
+    isError: mutation.isError,
+  };
+};
+
+export const useDeleteImage = () => {
+  const queryClient = useQueryClient();
+  const { getApi } = useApi();
+
+  const mutation = useMutation<void, Error, string>({
+    mutationFn: async (imageId: string) => deleteImage(await getApi(), imageId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: foldersKeys.base() });
+    },
+  });
+
+  return {
+    deleteImage: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    error: mutation.error,
+    isError: mutation.isError,
   };
 };
