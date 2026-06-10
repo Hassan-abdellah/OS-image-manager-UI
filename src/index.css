@@ -150,6 +150,19 @@
 }
 
 @layer utilities {
+  .input-field {
+    @apply text-foreground focus-visible:border-pale-slate-2 focus-visible:ring-pale-slate focus-visible:ring-[3px]
+    focus-within:ring-pale-slate focus-within:ring-[3px]
+    aria-invalid:ring-destructive/20 aria-invalid:ring-[3px] dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive;
+  }
+  .input-label {
+    @apply text-foreground;
+  }
+
+  .input-group {
+    @apply has-[[data-slot=input-group-control]:focus-visible]:border-pale-slate-2 has-[[data-slot=input-group-control]:focus-visible]:ring-pale-slate has-[[data-slot=input-group-control]:focus-visible]:ring-[3px]
+    has-[[data-slot][aria-invalid=true]]:ring-destructive/20 has-[[data-slot][aria-invalid=true]]:ring-[3px] dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40 has-[[data-slot][aria-invalid=true]]:border-destructive;
+  }
   .card-width {
     @apply lg:w-full w-[calc(100%-30px)];
   }

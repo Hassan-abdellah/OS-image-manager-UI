@@ -7,6 +7,16 @@ export interface folderData {
   user_id: string;
 }
 
+export interface imageData {
+  id: string;
+  file_name: string;
+  original_name: string;
+  size: number;
+  createdAt: string;
+  folder_id: string;
+  user_id: string;
+  url: string;
+}
 export interface paramsType {
   page?: number;
   per_page?: number;
@@ -31,7 +41,7 @@ export interface foldersResponse {
     pagination?: paginationMeta;
   };
   images: {
-    images: string[];
+    images: imageData[];
     pagination?: paginationMeta;
   };
 }
