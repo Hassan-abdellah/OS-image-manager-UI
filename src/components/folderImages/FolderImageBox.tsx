@@ -7,11 +7,26 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { Trash2 } from "lucide-react";
-import { Fragment, useCallback, useState } from "react";
+import {
+  ArrowDownToLine,
+  ExternalLink,
+  Scissors,
+  SquareCheck,
+  Trash2,
+} from "lucide-react";
+import { Fragment, useCallback, useMemo, useState } from "react";
 import DeleteModal from "../common/DeleteModal";
-import { useDeleteImage } from "@/hooks/useFolders";
-const FolderImageBox = ({ folderImage }: { folderImage: imageData }) => {
+import { useDeleteImage } from "@/hooks/useImages";
+import clsx from "clsx";
+const FolderImageBox = ({
+  folderImage,
+  imagesIds,
+  setImagesIds,
+}: {
+  folderImage: imageData;
+  imagesIds: string[];
+  setImagesIds: (ids: string[] | []) => void;
+}) => {
   const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
   const { deleteImage, isPending: isDeleting } = useDeleteImage();
 
@@ -20,10 +35,29 @@ const FolderImageBox = ({ folderImage }: { folderImage: imageData }) => {
     await deleteImage(folderImage.id);
   }, [folderImage.id, deleteImage]);
 
+  const handleSelectImage = useCallback(() => {
+    const imageId = folderImage.id;
+    setImagesIds(
+      imagesIds.includes(imageId)
+        ? imagesIds.filter((item: string) => item !== imageId)
+        : [...imagesIds, imageId],
+    );
+  }, [folderImage.id, imagesIds, setImagesIds]);
+
+  const isImageSelected: boolean = useMemo(() => {
+    return imagesIds.includes(folderImage.id);
+  }, [folderImage.id, imagesIds]);
   return (
     <Fragment>
       <ContextMenu>
-        <ContextMenuTrigger className="flex flex-col gap-1 rounded-lg max-w-37.5 cursor-pointer">
+        <ContextMenuTrigger
+          className={clsx(
+            "flex flex-col gap-1 rounded-lg max-w-37.5 cursor-pointer",
+            {
+              "bg-pale-slate/50": isImageSelected,
+            },
+          )}
+        >
           <img
             src={folderImage.url}
             alt={folderImage.file_name}
@@ -33,19 +67,28 @@ const FolderImageBox = ({ folderImage }: { folderImage: imageData }) => {
         </ContextMenuTrigger>
         <ContextMenuContent className="w-48">
           {/* First Group */}
-          <ContextMenuGroup>
+          <ContextMenuGroup className="space-y-1">
             <ContextMenuItem
               className="cursor-pointer"
               onClick={() => window.open(`${folderImage.url}`, "_blank")}
             >
-              Open In New Tab
+              <ExternalLink />
+              <span>Open New Tab</span>
             </ContextMenuItem>
-            <ContextMenuItem disabled className="cursor-pointer">
-              Back
+            <ContextMenuItem className="cursor-pointer">
+              <Scissors />
+              <span>Cut</span>
             </ContextMenuItem>
-            <ContextMenuItem disabled>Forward</ContextMenuItem>
-            <ContextMenuItem disabled className="cursor-pointer">
-              Reload
+            <ContextMenuItem className="cursor-pointer">
+              <ArrowDownToLine />
+              <span>Download</span>
+            </ContextMenuItem>
+            <ContextMenuItem
+              className="cursor-pointer"
+              onClick={() => handleSelectImage()}
+            >
+              <SquareCheck />
+              <span>Select</span>
             </ContextMenuItem>
           </ContextMenuGroup>
 
