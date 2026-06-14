@@ -24,6 +24,11 @@ export interface paramsType {
   sort_type?: "desc" | "asc";
   parent_id?: string;
 }
+export interface neighborsParams {
+  sort_by?: "name" | "createdAt" | "size";
+  sort_type?: "desc" | "asc";
+  folder_id?: string;
+}
 export interface paginationMeta {
   total: number;
   page: number;
@@ -44,4 +49,9 @@ export interface foldersResponse {
     images: imageData[];
     pagination?: paginationMeta;
   };
+}
+
+export interface neighborsRes {
+  prev?: { id: string };
+  next?: { id: string };
 }
