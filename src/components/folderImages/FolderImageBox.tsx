@@ -16,8 +16,9 @@ import {
 } from "lucide-react";
 import { Fragment, useCallback, useMemo, useState } from "react";
 import DeleteModal from "../common/DeleteModal";
-import { useDeleteImage } from "@/hooks/useImages";
+import { useDeleteImage, useDownloadImage } from "@/hooks/useImages";
 import clsx from "clsx";
+import ImageModal from "./ImageModal";
 const FolderImageBox = ({
   folderImage,
   imagesIds,
@@ -27,9 +28,10 @@ const FolderImageBox = ({
   imagesIds: string[];
   setImagesIds: (ids: string[] | []) => void;
 }) => {
+  const [isModal, setIsModal] = useState<boolean>(false);
   const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
   const { deleteImage, isPending: isDeleting } = useDeleteImage();
-
+  const { downloadImage, isPending: isDownloading } = useDownloadImage();
   const handleDeleteImage = useCallback(async () => {
     if (!folderImage.id) return;
     await deleteImage(folderImage.id);
@@ -51,19 +53,24 @@ const FolderImageBox = ({
     <Fragment>
       <ContextMenu>
         <ContextMenuTrigger
+          onClick={() => {
+            setIsModal(true);
+          }}
           className={clsx(
-            "flex flex-col gap-1 rounded-lg max-w-37.5 cursor-pointer",
+            "flex flex-col items-center py-2 gap-1 rounded-lg max-w-37.5 cursor-pointer hover:bg-pale-slate/30",
             {
-              "bg-pale-slate/50": isImageSelected,
+              "bg-pale-slate/30": isImageSelected,
             },
           )}
         >
-          <img
-            src={folderImage.url}
-            alt={folderImage.file_name}
-            className="w-20 h-20 object-contain"
-          />
-          <h5>{folderImage.file_name}</h5>
+          <div className="bg-black/85">
+            <img
+              src={folderImage.url}
+              alt={folderImage.file_name}
+              className="w-20 h-20 object-contain"
+            />
+          </div>
+          <h5 className="text-center">{folderImage.file_name}</h5>
         </ContextMenuTrigger>
         <ContextMenuContent className="w-48">
           {/* First Group */}
@@ -79,7 +86,16 @@ const FolderImageBox = ({
               <Scissors />
               <span>Cut</span>
             </ContextMenuItem>
-            <ContextMenuItem className="cursor-pointer">
+            <ContextMenuItem
+              className="cursor-pointer"
+              disabled={isDownloading}
+              onClick={async () =>
+                await downloadImage({
+                  imageId: folderImage.id,
+                  fileName: folderImage.original_name,
+                })
+              }
+            >
               <ArrowDownToLine />
               <span>Download</span>
             </ContextMenuItem>
@@ -116,6 +132,14 @@ const FolderImageBox = ({
         onDelete={handleDeleteImage}
         isDeleting={isDeleting}
       />
+
+      {isModal ? (
+        <ImageModal
+          isOpen={isModal}
+          setIsOpen={setIsModal}
+          image={folderImage}
+        />
+      ) : null}
     </Fragment>
   );
 };

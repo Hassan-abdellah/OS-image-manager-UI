@@ -10,6 +10,7 @@ const SingleFolderPage = () => {
     { parent_id: folderId },
     folderId ? true : false,
   );
+
   return (
     <section className="container py-8">
       {isLoading ? (
@@ -17,9 +18,7 @@ const SingleFolderPage = () => {
       ) : (
         <div className="flex flex-col gap-8">
           {folderId ? <UploadImagesToFolderFom folderId={folderId} /> : null}
-          {folders.length > 0 ? (
-            <FoldersGrid folders={folders} folderImages={images} />
-          ) : null}
+          <FoldersGrid folders={folders} folderImages={images} />
         </div>
       )}
     </section>

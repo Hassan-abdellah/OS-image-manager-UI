@@ -4,7 +4,7 @@ import { Link } from "react-router";
 
 const Navbar = () => {
   return (
-    <header className="bg-deep-space-blue text-white sticky z-50 top-0 left-0 right-0 w-full h-(--nav-height) backdrop-blur-3xl flex items-center">
+    <header className="bg-platinum text-ink-black sticky z-50 top-0 left-0 right-0 w-full h-(--nav-height) backdrop-blur-3xl flex items-center">
       <nav className="container flex items-center justify-between">
         {/* logo */}
 

@@ -29,7 +29,15 @@ const FoldersGrid = ({
       <div className="flex flex-col gap-4">
         {/* delete all images */}
         {folderImages.length && imagesIds.length ? (
-          <div className="flex justify-end">
+          <div className="flex items-center gap-1.5 justify-end">
+            <Button
+              type="button"
+              className="cursor-pointer py-4 px-2"
+              disabled={imagesIds.length === 0}
+              onClick={() => setImagesIds([])}
+            >
+              Unselect ({imagesIds.length}) Images
+            </Button>
             <Button
               type="button"
               variant="destructive"
