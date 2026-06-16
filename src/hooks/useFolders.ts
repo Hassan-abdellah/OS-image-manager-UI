@@ -13,7 +13,14 @@ import type {
   paginationMeta,
   paramsType,
 } from "@/types/apiDataTypes";
-import { getFolders, getRootFolder, uploadFolderImages } from "@/api/folder";
+import {
+  createFolder,
+  getFolders,
+  getRootFolder,
+  moveFolder,
+  renameFolder,
+  uploadFolderImages,
+} from "@/api/folder";
 
 // Centralized query key factory
 export const foldersKeys = {
@@ -21,6 +28,7 @@ export const foldersKeys = {
   all: (params?: paramsType) => [...foldersKeys.base(), params] as const,
 };
 
+// get root folder
 export const useRootFolder = () => {
   const { isSignedIn, isLoaded } = useAuth();
   const { getApi } = useApi();
@@ -41,6 +49,8 @@ export const useRootFolder = () => {
     isError: query.isError,
   };
 };
+
+// get folders
 export const useFolders = (
   params: paramsType = {},
   isEnabled: boolean = true,
@@ -81,6 +91,82 @@ export const useFolders = (
     fetchNextPage: query.fetchNextPage,
   };
 };
+
+// create folder
+
+export const useCreateFolder = () => {
+  const { getApi } = useApi();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (data: { name: string; parent_id: string }) =>
+      createFolder(await getApi(), data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: foldersKeys.base() });
+    },
+  });
+
+  return {
+    createFolder: mutation.mutateAsync,
+    isSaving: mutation.isPending,
+    error: mutation.error,
+    isError: mutation.isError,
+  };
+};
+// rename folder
+
+export const useRenameFolder = () => {
+  const { getApi } = useApi();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async ({
+      folderId,
+      data,
+    }: {
+      folderId: string;
+      data: { name: string };
+    }) => renameFolder(await getApi(), folderId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: foldersKeys.base() });
+    },
+  });
+
+  return {
+    renameFolder: mutation.mutateAsync,
+    isSaving: mutation.isPending,
+    error: mutation.error,
+    isError: mutation.isError,
+  };
+};
+// move folder
+
+export const useMoveFolder = () => {
+  const { getApi } = useApi();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async ({
+      folderId,
+      data,
+    }: {
+      folderId: string;
+      data: { new_parent_id: string };
+    }) => moveFolder(await getApi(), folderId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: foldersKeys.base() });
+    },
+  });
+
+  return {
+    moveFolder: mutation.mutateAsync,
+    isSaving: mutation.isPending,
+    error: mutation.error,
+    isError: mutation.isError,
+  };
+};
+
+// upload images to folder
 
 export const useUploadFolderImages = () => {
   const { getApi } = useApi();

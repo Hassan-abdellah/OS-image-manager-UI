@@ -5,6 +5,9 @@ import { Fragment, useCallback, useState } from "react";
 import { Button } from "../ui/button";
 import DeleteModal from "../common/DeleteModal";
 import { useDeleteMultiImages } from "@/hooks/useImages";
+import CreateNewFolderButton from "./CreateNewFolderButton";
+import CreateFolderForm from "./CreateFolderForm";
+import { useParams } from "react-router";
 
 const FoldersGrid = ({
   folders,
@@ -13,9 +16,13 @@ const FoldersGrid = ({
   folders: folderData[];
   folderImages: imageData[];
 }) => {
+  const { id: folderId } = useParams();
+
   const [imagesIds, setImagesIds] = useState<string[] | []>([]);
   const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
-
+  const [generatedFolders, setGeneratedFilters] = useState<
+    { id: number; name: string }[]
+  >([]);
   const { deleteMultiImages, isPending: isDeleting } = useDeleteMultiImages();
 
   const handleDeleteMultiImages = useCallback(async () => {
@@ -24,6 +31,22 @@ const FoldersGrid = ({
     setImagesIds([]);
   }, [imagesIds, deleteMultiImages]);
 
+  // generate folder in UI
+  const generateNewFolder = () => {
+    const alreadyGenerated = [...generatedFolders];
+    const newGenerated = {
+      id: alreadyGenerated.length + 1,
+      name: `New Folder ${alreadyGenerated.length + 1}`,
+    };
+    const combined = [...alreadyGenerated, newGenerated];
+    setGeneratedFilters(combined);
+  };
+  // remove created folder from UI after saving to DB
+  const removedCreatedFolder = (folderIdToRemove: number) => {
+    setGeneratedFilters((prev) =>
+      prev.filter((item) => item.id !== folderIdToRemove),
+    );
+  };
   return (
     <Fragment>
       <div className="flex flex-col gap-4">
@@ -49,10 +72,29 @@ const FoldersGrid = ({
             </Button>
           </div>
         ) : null}
+
+        {/* Create Folder Button */}
+        <CreateNewFolderButton handleCreateFolder={() => generateNewFolder()} />
+        {/* Grid system */}
         <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-6">
+          {/* new folders */}
+          {folderId ? (
+            <Fragment>
+              {generatedFolders.map((newFolder) => (
+                <CreateFolderForm
+                  folderName={newFolder.name}
+                  parentId={folderId}
+                  afterCreateCB={() => removedCreatedFolder(newFolder.id)}
+                />
+              ))}
+            </Fragment>
+          ) : null}
+
+          {/* List folders */}
           {folders.map((folder) => (
             <FolderBox folder={folder} key={folder.id} />
           ))}
+          {/* list images */}
           {folderImages.map((image) => (
             <FolderImageBox
               folderImage={image}

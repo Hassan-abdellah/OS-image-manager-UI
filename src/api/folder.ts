@@ -37,6 +37,31 @@ export const getFolders = async (
   };
 };
 
+// Create Folder
+export const createFolder = async (
+  api: AxiosInstance,
+  data: { name: string; parent_id: string },
+): Promise<{
+  folder: folderData;
+}> => await api.post(FOLDERSURL, { ...data });
+
+// rename Folder
+export const renameFolder = async (
+  api: AxiosInstance,
+  folderId: string,
+  data: { name: string },
+): Promise<{
+  folder: folderData;
+}> => await api.put(`${FOLDERSURL}/${folderId}/rename`, { data });
+// move Folder
+export const moveFolder = async (
+  api: AxiosInstance,
+  folderId: string,
+  data: { new_parent_id: string },
+): Promise<{
+  folder: folderData;
+}> => await api.patch(`${FOLDERSURL}/${folderId}/move`, { data });
+
 // Upload images to folder
 export const uploadFolderImages = (
   api: AxiosInstance,
