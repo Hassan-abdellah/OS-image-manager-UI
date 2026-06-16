@@ -25,12 +25,14 @@ export const getFolders = async (
   api: AxiosInstance,
   params?: paramsType | undefined,
 ): Promise<{
+  folder: folderData;
   folders: folderData[];
   images: imageData[];
   pagination?: paginationMeta;
 }> => {
   const res: foldersResponse = await api.get(FOLDERSURL, { params });
   return {
+    folder: res.folder,
     folders: res.folders.folders,
     pagination: res.folders.pagination,
     images: res.images.images,
@@ -52,7 +54,7 @@ export const renameFolder = async (
   data: { name: string },
 ): Promise<{
   folder: folderData;
-}> => await api.put(`${FOLDERSURL}/${folderId}/rename`, { data });
+}> => await api.put(`${FOLDERSURL}/${folderId}/rename`, { ...data });
 // move Folder
 export const moveFolder = async (
   api: AxiosInstance,
@@ -81,3 +83,10 @@ export const uploadFolderImages = (
     },
   });
 };
+// delete Folder
+export const deleteFolder = async (
+  api: AxiosInstance,
+  folderId: string,
+): Promise<{
+  folder: folderData;
+}> => await api.delete(`${FOLDERSURL}/${folderId}`);

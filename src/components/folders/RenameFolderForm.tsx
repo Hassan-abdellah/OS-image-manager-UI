@@ -1,22 +1,22 @@
 import { useState } from "react";
-import FoldersIcon from "../icons/FoldersIcon";
 import { Input } from "../ui/input";
-import { useCreateFolder } from "@/hooks/useFolders";
+import { useRenameFolder } from "@/hooks/useFolders";
+import FoldersIcon from "../icons/FoldersIcon";
 import { toast } from "sonner";
 
-const CreateFolderForm = ({
+const RenameFolderForm = ({
   folderName,
-  parentId,
-  afterCreateCB,
+  folderId,
+  afterRenameCB,
 }: {
   folderName: string;
-  parentId: string;
-  afterCreateCB: () => void;
+  folderId: string;
+  afterRenameCB: () => void;
 }) => {
   const [name, setName] = useState<string>(folderName);
-  const { createFolder, isSaving } = useCreateFolder();
+  const { renameFolder, isSaving } = useRenameFolder();
 
-  const handleCreateFolder = async (
+  const handleRenameFolder = async (
     e:
       | React.SubmitEvent<HTMLFormElement>
       | React.FocusEvent<HTMLFormElement, Element>,
@@ -25,12 +25,9 @@ const CreateFolderForm = ({
 
     if (!name) return;
     try {
-      await createFolder({
-        parent_id: parentId,
-        name: name,
-      });
-      if (afterCreateCB) afterCreateCB();
-      toast.success("Folder Created");
+      await renameFolder({ folderId: folderId, data: { name: name } });
+      if (afterRenameCB) afterRenameCB();
+      toast.success("Folder Renamed");
     } catch (error) {
       console.log("error", error);
     }
@@ -39,13 +36,13 @@ const CreateFolderForm = ({
   return (
     <form
       className="flex flex-col rounded-lg max-w-37.5"
-      onSubmit={handleCreateFolder}
-      onBlur={handleCreateFolder}
+      onSubmit={handleRenameFolder}
+      onBlur={handleRenameFolder}
     >
       <FoldersIcon className="w-20 h-20" />
 
       <Input
-        id="form-new-folder-name"
+        id="form-rename-folder-name"
         value={name}
         onChange={(e) => setName(e.target.value)}
         disabled={isSaving}
@@ -54,4 +51,4 @@ const CreateFolderForm = ({
   );
 };
 
-export default CreateFolderForm;
+export default RenameFolderForm;
