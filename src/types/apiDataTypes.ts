@@ -41,6 +41,7 @@ export interface SingleFoldersResponse {
 }
 export interface foldersResponse {
   status: boolean;
+  folder: folderData;
   folders: {
     folders: folderData[];
     pagination?: paginationMeta;

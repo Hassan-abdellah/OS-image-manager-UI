@@ -69,7 +69,8 @@
 
 :root {
   --background: var(--color-bright-snow);
-  --foreground: var(--color-ink-black);
+  /* --foreground: var(--color-ink-black); */
+  --foreground: var(--color-deep-space-blue);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
