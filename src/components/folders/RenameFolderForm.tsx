@@ -3,7 +3,8 @@ import { Input } from "../ui/input";
 import { useRenameFolder } from "@/hooks/useFolders";
 import FoldersIcon from "../icons/FoldersIcon";
 import { toast } from "sonner";
-
+import { useDisplay } from "@/store/useDisplay";
+import clsx from "clsx";
 const RenameFolderForm = ({
   folderName,
   folderId,
@@ -13,6 +14,8 @@ const RenameFolderForm = ({
   folderId: string;
   afterRenameCB: () => void;
 }) => {
+  const { isGridView, isListView } = useDisplay();
+
   const [name, setName] = useState<string>(folderName);
   const { renameFolder, isSaving } = useRenameFolder();
 
@@ -35,14 +38,25 @@ const RenameFolderForm = ({
 
   return (
     <form
-      className="flex flex-col rounded-lg max-w-37.5"
+      className={clsx("flex rounded-lg", {
+        "flex-col max-w-37.5": isGridView,
+        "flex-row p-2 items-center gap-1": isListView,
+      })}
       onSubmit={handleRenameFolder}
       onBlur={handleRenameFolder}
     >
-      <FoldersIcon className="w-20 h-20" />
+      <FoldersIcon
+        className={clsx({
+          "w-20 h-20": isGridView,
+          "w-5 h-5": isListView,
+        })}
+      />
 
       <Input
         id="form-rename-folder-name"
+        className={clsx({
+          "h-full": isListView,
+        })}
         value={name}
         onChange={(e) => setName(e.target.value)}
         disabled={isSaving}

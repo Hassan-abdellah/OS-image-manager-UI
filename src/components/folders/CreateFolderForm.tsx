@@ -3,6 +3,8 @@ import FoldersIcon from "../icons/FoldersIcon";
 import { Input } from "../ui/input";
 import { useCreateFolder } from "@/hooks/useFolders";
 import { toast } from "sonner";
+import { useDisplay } from "@/store/useDisplay";
+import clsx from "clsx";
 
 const CreateFolderForm = ({
   folderName,
@@ -13,6 +15,8 @@ const CreateFolderForm = ({
   parentId: string;
   afterCreateCB: () => void;
 }) => {
+  const { isGridView, isListView } = useDisplay();
+
   const [name, setName] = useState<string>(folderName);
   const { createFolder, isSaving } = useCreateFolder();
 
@@ -38,14 +42,25 @@ const CreateFolderForm = ({
 
   return (
     <form
-      className="flex flex-col rounded-lg max-w-37.5"
+      className={clsx("flex rounded-lg", {
+        "flex-col max-w-37.5": isGridView,
+        "flex-row p-2 items-center gap-1": isListView,
+      })}
       onSubmit={handleCreateFolder}
       onBlur={handleCreateFolder}
     >
-      <FoldersIcon className="w-20 h-20" />
+      <FoldersIcon
+        className={clsx({
+          "w-20 h-20": isGridView,
+          "w-5 h-5": isListView,
+        })}
+      />
 
       <Input
         id="form-new-folder-name"
+        className={clsx({
+          "h-full": isListView,
+        })}
         value={name}
         onChange={(e) => setName(e.target.value)}
         disabled={isSaving}

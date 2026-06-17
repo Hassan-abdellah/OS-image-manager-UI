@@ -19,6 +19,9 @@ import DeleteModal from "../common/DeleteModal";
 import { useDeleteImage, useDownloadImage } from "@/hooks/useImages";
 import clsx from "clsx";
 import ImageModal from "./ImageModal";
+import { useDisplay } from "@/store/useDisplay";
+import { getSizeWithUnit } from "@/utils/imagesUtils";
+import { format } from "date-fns";
 const FolderImageBox = ({
   folderImage,
   imagesIds,
@@ -28,6 +31,8 @@ const FolderImageBox = ({
   imagesIds: string[];
   setImagesIds: (ids: string[] | []) => void;
 }) => {
+  const { isGridView, isListView } = useDisplay();
+
   const [isModal, setIsModal] = useState<boolean>(false);
   const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
   const { deleteImage, isPending: isDeleting } = useDeleteImage();
@@ -49,6 +54,12 @@ const FolderImageBox = ({
   const isImageSelected: boolean = useMemo(() => {
     return imagesIds.includes(folderImage.id);
   }, [folderImage.id, imagesIds]);
+
+  const imageSize = useMemo(() => {
+    const { value, unit } = getSizeWithUnit(folderImage.size);
+    return `${value} ${unit}`;
+  }, [folderImage.size]);
+
   return (
     <Fragment>
       <ContextMenu>
@@ -57,9 +68,11 @@ const FolderImageBox = ({
             setIsModal(true);
           }}
           className={clsx(
-            "flex flex-col items-center py-2 gap-1 rounded-lg max-w-37.5 cursor-pointer hover:bg-pale-slate/30",
+            "flex items-center rounded-lg cursor-pointer hover:bg-platinum",
             {
-              "bg-pale-slate/30": isImageSelected,
+              "flex-col gap-1 max-w-37.5 py-2": isGridView,
+              "flex-row gap-2 p-2": isListView,
+              "bg-platinum": isImageSelected,
             },
           )}
         >
@@ -67,10 +80,23 @@ const FolderImageBox = ({
             <img
               src={folderImage.url}
               alt={folderImage.file_name}
-              className="w-20 h-20 object-contain"
+              className={clsx("object-contain", {
+                "w-20 h-20": isGridView,
+                "w-5 h-5": isListView,
+              })}
             />
           </div>
           <h5 className="text-center">{folderImage.file_name}</h5>
+
+          {/* size and time in list view only */}
+          {isListView ? (
+            <div className="flex items-center gap-1 justify-end flex-1">
+              <span className="text-pale-slate-2">{imageSize}</span>
+              <span className="text-pale-slate">
+                {format(folderImage.createdAt, "dd-MM-yyyy")}
+              </span>
+            </div>
+          ) : null}
         </ContextMenuTrigger>
         <ContextMenuContent className="w-48">
           {/* First Group */}

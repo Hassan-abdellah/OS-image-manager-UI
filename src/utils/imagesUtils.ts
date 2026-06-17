@@ -26,3 +26,18 @@ export const getImageDimensions = (
     img.src = url;
   });
 };
+
+// convert bytes to MB
+export const getSizeWithUnit = (
+  bytes: number,
+): { value: number; unit: "KB" | "MB" } => {
+  if (bytes <= 0) return { value: 0, unit: "KB" };
+
+  const mb = bytes / (1024 * 1024);
+
+  if (mb >= 0.2) {
+    return { value: Number(mb.toFixed(2)), unit: "MB" };
+  }
+
+  return { value: Number((bytes / 1024).toFixed(2)), unit: "KB" };
+};
