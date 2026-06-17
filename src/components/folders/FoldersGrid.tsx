@@ -8,6 +8,9 @@ import { useDeleteMultiImages } from "@/hooks/useImages";
 import CreateNewFolderButton from "./CreateNewFolderButton";
 import CreateFolderForm from "./CreateFolderForm";
 import { useParams } from "react-router";
+import DisplayToggleButton from "./DisplayToggleButton";
+import { useDisplay } from "@/store/useDisplay";
+import clsx from "clsx";
 
 const FoldersGrid = ({
   folders,
@@ -16,6 +19,8 @@ const FoldersGrid = ({
   folders: folderData[];
   folderImages: imageData[];
 }) => {
+  const { isGridView, isListView } = useDisplay();
+
   const { id: folderId } = useParams();
 
   const [imagesIds, setImagesIds] = useState<string[] | []>([]);
@@ -72,11 +77,24 @@ const FoldersGrid = ({
             </Button>
           </div>
         ) : null}
-
-        {/* Create Folder Button */}
-        <CreateNewFolderButton handleCreateFolder={() => generateNewFolder()} />
+        {/* CTA */}
+        <div className="flex items-center justify-between">
+          {/* Create Folder Button */}
+          <CreateNewFolderButton
+            handleCreateFolder={() => generateNewFolder()}
+          />
+          {/* Toggle Display */}
+          <DisplayToggleButton />
+        </div>
         {/* Grid system */}
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-6">
+        {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-6"> */}
+        <div
+          className={clsx("grid", {
+            "grid-cols-[repeat(auto-fill,120px)] justify-start gap-x-2 gap-y-4":
+              isGridView,
+            "grid-cols-1 justify-start gap-x-0 gap-y-1": isListView,
+          })}
+        >
           {/* new folders */}
           {folderId ? (
             <Fragment>

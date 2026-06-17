@@ -26,7 +26,7 @@ const UploadImagesToFolderFom = ({ folderId }: { folderId: string }) => {
       <UploadInput ref={fileInputRef} />
       <Button
         type="submit"
-        className="px-6 py-4 bg-ink-black flex items-center gap-1.5 cursor-pointer"
+        className="px-6 py-4 bg-smart-blue hover:bg-deep-space-blue transition-colors duration-200 flex items-center gap-1.5 cursor-pointer"
         disabled={isPending}
       >
         {isPending ? (
