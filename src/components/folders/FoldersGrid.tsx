@@ -11,6 +11,7 @@ import { useParams } from "react-router";
 import DisplayToggleButton from "./DisplayToggleButton";
 import { useDisplay } from "@/store/useDisplay";
 import clsx from "clsx";
+import SortingDropdown from "./SortingDropdown";
 
 const FoldersGrid = ({
   folders,
@@ -83,8 +84,12 @@ const FoldersGrid = ({
           <CreateNewFolderButton
             handleCreateFolder={() => generateNewFolder()}
           />
-          {/* Toggle Display */}
-          <DisplayToggleButton />
+          <div className="flex items-center gap-3">
+            {/* sorting */}
+            <SortingDropdown />
+            {/* Toggle Display */}
+            <DisplayToggleButton />
+          </div>
         </div>
         {/* Grid system */}
         {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-6"> */}

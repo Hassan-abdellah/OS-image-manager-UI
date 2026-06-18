@@ -17,16 +17,18 @@ export interface imageData {
   user_id: string;
   url: string;
 }
+export type sortByType = "name" | "createdAt" | "size";
+export type sortDirType = "desc" | "asc";
 export interface paramsType {
   page?: number;
   per_page?: number;
-  sort_by?: "name" | "createdAt" | "size";
-  sort_type?: "desc" | "asc";
+  sort_by?: sortByType;
+  sort_type?: sortDirType;
   parent_id?: string;
 }
 export interface neighborsParams {
-  sort_by?: "name" | "createdAt" | "size";
-  sort_type?: "desc" | "asc";
+  sort_by?: sortByType;
+  sort_type?: sortDirType;
   folder_id?: string;
 }
 export interface paginationMeta {
