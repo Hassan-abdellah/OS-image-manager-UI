@@ -9,6 +9,7 @@ import { Fragment, useCallback, useState } from "react";
 import DeleteModal from "../common/DeleteModal";
 import { useDeleteFolder } from "@/hooks/useFolders";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/utils/apiErrorsUtils";
 const FolderContextMenu = ({
   folderId,
   onRenameClick,
@@ -20,8 +21,13 @@ const FolderContextMenu = ({
   const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
   const handleDeleteFolder = useCallback(async () => {
     if (!folderId) return;
-    await deleteFolder(folderId);
-    toast.success("Folder Deleted");
+    try {
+      await deleteFolder(folderId);
+      toast.success("Folder Deleted");
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage);
+    }
   }, [folderId, deleteFolder]);
   return (
     <Fragment>

@@ -180,7 +180,7 @@ export const useUploadFolderImages = () => {
       images,
       folderId,
     }: {
-      images: FileList;
+      images: File[];
       folderId: string;
     }) => uploadFolderImages(await getApi(), { folderId, images }),
     onSuccess: () => {

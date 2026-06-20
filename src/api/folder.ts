@@ -67,11 +67,11 @@ export const moveFolder = async (
 // Upload images to folder
 export const uploadFolderImages = (
   api: AxiosInstance,
-  data: { folderId: string; images: FileList },
+  data: { folderId: string; images: File[] },
 ): Promise<folderData> => {
   const formData = new FormData();
 
-  if (data.images instanceof FileList) {
+  if (data.images.length > 0) {
     Array.from(data.images).forEach((image) => {
       formData.append("images", image);
     });

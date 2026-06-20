@@ -5,6 +5,7 @@ import { useCreateFolder } from "@/hooks/useFolders";
 import { toast } from "sonner";
 import { useDisplay } from "@/store/useDisplay";
 import clsx from "clsx";
+import { getErrorMessage } from "@/utils/apiErrorsUtils";
 
 const CreateFolderForm = ({
   folderName,
@@ -36,7 +37,8 @@ const CreateFolderForm = ({
       if (afterCreateCB) afterCreateCB();
       toast.success("Folder Created");
     } catch (error) {
-      console.log("error", error);
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage);
     }
   };
 
