@@ -5,6 +5,7 @@ import FoldersIcon from "../icons/FoldersIcon";
 import { toast } from "sonner";
 import { useDisplay } from "@/store/useDisplay";
 import clsx from "clsx";
+import { getErrorMessage } from "@/utils/apiErrorsUtils";
 const RenameFolderForm = ({
   folderName,
   folderId,
@@ -32,7 +33,8 @@ const RenameFolderForm = ({
       if (afterRenameCB) afterRenameCB();
       toast.success("Folder Renamed");
     } catch (error) {
-      console.log("error", error);
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage);
     }
   };
 

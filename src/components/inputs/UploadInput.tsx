@@ -1,12 +1,26 @@
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import React from "react";
+import type { modifiedFileType } from "@/types";
+import { useEffect, useRef } from "react";
 
 const UploadInput = ({
-  ref,
+  files,
+  handleSelectFiles,
 }: {
-  ref: React.RefObject<HTMLInputElement | null>;
+  files: modifiedFileType[];
+  handleSelectFiles: (files: File[] | []) => void;
 }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Call this wherever you clear files
+  const clearFiles = () => {
+    if (inputRef.current) inputRef.current.value = "";
+  };
+
+  useEffect(() => {
+    if (!files.length) clearFiles();
+  }, [files.length]);
+
   return (
     <Field>
       <FieldLabel htmlFor="picture" className="input-label">
@@ -15,10 +29,11 @@ const UploadInput = ({
       <Input
         id="picture"
         type="file"
+        ref={inputRef}
+        onChange={(e) => handleSelectFiles(Array.from(e.target.files ?? []))}
         className="input-field cursor-pointer"
         multiple
         accept=".jpg,.jpeg,.png"
-        ref={ref}
       />
       <FieldDescription>Select max of 10 pictures To Upload.</FieldDescription>
     </Field>

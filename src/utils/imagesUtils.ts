@@ -3,6 +3,16 @@ export const getBlobUrl = (blob: Blob): string => {
   return URL.createObjectURL(blob);
 };
 
+// generate file url
+
+export const getFileUrl = (file: File): string => {
+  return URL.createObjectURL(file);
+};
+// revoke generated file url
+
+export const revokeUrl = (url: string): void => {
+  URL.revokeObjectURL(url);
+};
 // Download helper
 export const downloadBlob = (blob: Blob, fileName: string = "image"): void => {
   const url = URL.createObjectURL(blob);
