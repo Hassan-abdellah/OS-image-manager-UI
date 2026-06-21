@@ -38,9 +38,8 @@ export const useGetImage = (imageId: string, isEnabled: boolean = true) => {
     staleTime: 1000 * 60 * 5, // ✅ add this
   });
 
-  const fetchImage = async (id?: string) => {
+  const fetchImage = (id?: string) => {
     if (id) setDynamicId(id);
-    await query.refetch();
   };
   return {
     data: query.data,
@@ -83,13 +82,23 @@ export const useImageNeighbors = (
 ) => {
   const { isSignedIn, isLoaded } = useAuth();
   const { getApi } = useApi();
+
+  const [dynamicId, setDynamicId] = useState<string>(imageId);
+  const [dynamicParams, setDynamicParams] = useState<neighborsParams>(params);
+
   // Stabilize params so the queryKey doesn't change every render
   const query = useQuery<neighborsRes>({
-    queryKey: foldersKeys.neighbors(imageId, params),
-    queryFn: async () => getImageNeighbors(await getApi(), imageId, params),
+    queryKey: foldersKeys.neighbors(dynamicId, dynamicParams),
+    queryFn: async () =>
+      getImageNeighbors(await getApi(), dynamicId, dynamicParams),
     enabled: isLoaded && !!isSignedIn && isEnabled,
     staleTime: 1000 * 60 * 5, // ✅ add this
   });
+
+  const fetchNeighbors = (id?: string, params: neighborsParams = {}) => {
+    if (id) setDynamicId(id);
+    if (params && Object.keys(params).length) setDynamicParams(params);
+  };
 
   return {
     next: query.data?.next,
@@ -97,6 +106,7 @@ export const useImageNeighbors = (
     isLoading: query.isLoading,
     error: query.error,
     isError: query.isError,
+    fetchNeighbors: fetchNeighbors,
   };
 };
 

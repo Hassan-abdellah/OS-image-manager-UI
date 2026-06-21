@@ -65,6 +65,9 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  --animate-slide-in-left: slide-in-left 0.3s ease-out;
+  --animate-slide-in-right: slide-in-right 0.3s ease-out;
 }
 
 :root {
@@ -176,8 +179,36 @@
   .page-height {
     @apply h-[calc(100%-var(--nav-height))];
   }
+
+  .icon-circle-btn {
+    @apply absolute flex items-center justify-center h-8 w-8 rounded-full cursor-pointer;
+  }
+  .modal-control-btn {
+    @apply top-1/2 bg-fresh-sky hover:bg-cerulean text-white;
+  }
 }
 
 .cl-footerItem {
   display: none;
+}
+
+@keyframes slide-in-left {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slide-in-right {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
