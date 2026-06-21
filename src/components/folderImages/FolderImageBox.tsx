@@ -104,7 +104,7 @@ const FolderImageBox = ({
             <div className="flex items-center gap-1 md:justify-end justify-start flex-1 md:text-base text-sm">
               <span className="text-pale-slate-2">{imageSize}</span>
               <span className="text-pale-slate">
-                {format(folderImage.createdAt, "dd-MM-yyyy")}
+                {format(folderImage.createdAt, "dd-MM-yyyy hh:mm:ss")}
               </span>
             </div>
           ) : null}

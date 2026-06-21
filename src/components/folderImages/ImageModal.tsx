@@ -2,11 +2,14 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useGetImage, useImageNeighbors } from "@/hooks/useImages";
 import type { imageData } from "@/types/apiDataTypes";
 import { Fragment, useCallback, useMemo, useState } from "react";
-import { Spinner } from "../ui/spinner";
-import { getBlobUrl } from "@/utils/imagesUtils";
-import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { downloadBlob, getBlobUrl } from "@/utils/imagesUtils";
+
 import clsx from "clsx";
+import { useSorting } from "@/store/useSorting";
+import ModalImageLoader from "./ModalImageLoader";
+import ModalImageControllers from "./ModalImageControllers";
+import { Button } from "../ui/button";
+import { ArrowDownToLine } from "lucide-react";
 
 const ImageModal = ({
   isOpen,
@@ -17,91 +20,108 @@ const ImageModal = ({
   setIsOpen: (open: boolean) => void;
   image: imageData;
 }) => {
+  const { sort_by, sort_type } = useSorting();
+
   const [direction, setDirection] = useState<"left" | "right" | null>(null);
 
   const isEnabled = useMemo(() => {
     return isOpen && image.id ? true : false;
   }, [isOpen, image.id]);
 
-  const { prev, next } = useImageNeighbors(
-    image.id,
-    { folder_id: image.folder_id },
-    isEnabled,
+  const params = useMemo(
+    () => ({
+      folder_id: image.folder_id,
+      sort_by,
+      sort_type,
+    }),
+    [image.folder_id, sort_by, sort_type],
   );
-
   const {
     data: currentImage,
     isLoading,
     fetchImage,
   } = useGetImage(image.id, isEnabled);
 
+  const { prev, next, fetchNeighbors } = useImageNeighbors(
+    image.id,
+    params,
+    isEnabled,
+  );
+
   const handlePrevClick = useCallback(() => {
     if (prev) {
       setDirection("left");
       fetchImage(prev.id);
+      fetchNeighbors(prev.id, params);
     }
-  }, [prev, fetchImage]);
+  }, [prev, fetchImage, fetchNeighbors, params]);
+
   const handleNextClick = useCallback(() => {
     if (next) {
       setDirection("right");
       fetchImage(next.id);
+      fetchNeighbors(next.id, params);
     }
-  }, [next, fetchImage]);
+  }, [next, fetchImage, fetchNeighbors, params]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent
         showCloseButton={false}
         aria-describedby={image.file_name}
         className="h-screen sm:max-w-full max-w-full bg-black/10 p-0"
+        onKeyDown={(e) => {
+          if (e.key === "ArrowRight") {
+            handleNextClick();
+          } else if (e.key === "ArrowLeft") {
+            handlePrevClick();
+          } else return;
+        }}
       >
-        <div
-          className={clsx(
-            "mx-auto no-scrollbar max-h-screen w-full overflow-y-auto relative",
-            {
-              "animate-slide-in-left": direction === "left",
-              "animate-slide-in-right": direction === "right",
-            },
-          )}
-        >
+        <div className={clsx("relative")}>
           {isLoading ? (
-            <div className="w-1/2 h-screen mx-auto bg-white flex items-center justify-center">
-              <div className="flex items-center justify-center">
-                <Spinner className="size-10" />
-              </div>
-            </div>
+            <ModalImageLoader />
           ) : (
             <Fragment>
               {currentImage ? (
-                <div>
-                  <Button
-                    type="button"
-                    aria-label="Go Previous"
-                    className="absolute left-4 top-1/2 flex items-center justify-center h-8 w-8 rounded-full bg-transparent cursor-pointer"
-                    onClick={() => handlePrevClick()}
-                    disabled={!prev}
+                <>
+                  {/* image */}
+                  <div
+                    className={clsx({
+                      "animate-slide-in-left": direction === "left",
+                      "animate-slide-in-right": direction === "right",
+                    })}
+                    onAnimationEnd={() => setDirection(null)}
                   >
-                    <ChevronLeft />
-                  </Button>
-                  <img
-                    src={getBlobUrl(currentImage)}
-                    alt={image.file_name}
-                    className="w-full h-screen object-contain"
-                  />
+                    <img
+                      src={getBlobUrl(currentImage)}
+                      alt={image.file_name}
+                      className="w-full h-[95vh] object-contain"
+                    />
 
-                  <Button
-                    type="button"
-                    aria-label="Go Next"
-                    className="absolute right-4 top-1/2 flex items-center justify-center h-8 w-8 rounded-full bg-transparent cursor-pointer"
-                    onClick={() => handleNextClick()}
-                    disabled={!next}
-                  >
-                    <ChevronRight />
-                  </Button>
-                </div>
-              ) : (
-                <div className="w-full h-screen bg-white" />
-              )}
+                    <div className="h-[5vh] flex items-center justify-center">
+                      <Button
+                        type="button"
+                        className="cursor-pointer flex items-center justify-center w-8 h-8 bg-transparent hover:bg-transparent text-foreground"
+                        aria-label="Download Image"
+                        onClick={() => downloadBlob(currentImage)}
+                      >
+                        <ArrowDownToLine className="size-5" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* controls */}
+
+                  <ModalImageControllers
+                    handleNextClick={handleNextClick}
+                    handlePrevClick={handlePrevClick}
+                    isNextDisabled={!next}
+                    isPrevDisabled={!prev}
+                    handleCloseClick={() => setIsOpen(false)}
+                  />
+                </>
+              ) : null}
             </Fragment>
           )}
         </div>
