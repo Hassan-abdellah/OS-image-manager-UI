@@ -1,17 +1,21 @@
 import type { AxiosInstance } from "axios";
 import { IMAGESURL } from "./url_helper";
-import type { neighborsParams, neighborsRes } from "@/types/apiDataTypes";
+import type {
+  imageData,
+  imageResponse,
+  neighborsParams,
+  neighborsRes,
+} from "@/types/apiDataTypes";
 
 // get image
 export const getImage = async (
   api: AxiosInstance,
   imageId: string,
-): Promise<Blob> => {
-  const res: Blob = await api.get(`${IMAGESURL}/${imageId}`, {
-    responseType: "blob",
-  });
-  return res;
+): Promise<imageData> => {
+  const res: imageResponse = await api.get(`${IMAGESURL}/${imageId}`);
+  return res.image;
 };
+
 // get image neighbors
 export const getImageNeighbors = async (
   api: AxiosInstance,

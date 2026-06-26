@@ -25,6 +25,23 @@ export const downloadBlob = (blob: Blob, fileName: string = "image"): void => {
   URL.revokeObjectURL(url);
 };
 
+// Download helper
+export const downloadImgURL = async (
+  url: string,
+  fileName: string = "image",
+): Promise<void> => {
+  const res = await fetch(url);
+  const blob = await res.blob();
+  const blobUrl = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = blobUrl;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(blobUrl);
+};
+
 export const getImageDimensions = (
   url: string,
 ): Promise<{ width: number; height: number }> => {

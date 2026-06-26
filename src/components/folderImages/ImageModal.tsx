@@ -2,15 +2,14 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useGetImage, useImageNeighbors } from "@/hooks/useImages";
 import type { imageData } from "@/types/apiDataTypes";
 import { Fragment, useCallback, useMemo, useState } from "react";
-import { downloadBlob, getBlobUrl } from "@/utils/imagesUtils";
 
 import clsx from "clsx";
 import { useSorting } from "@/store/useSorting";
 import ModalImageLoader from "./ModalImageLoader";
 import ModalImageControllers from "./ModalImageControllers";
-import { Button } from "../ui/button";
 import { ArrowDownToLine } from "lucide-react";
-
+import { Button } from "../ui/button";
+import { downloadImgURL } from "@/utils/imagesUtils";
 const ImageModal = ({
   isOpen,
   setIsOpen,
@@ -68,7 +67,7 @@ const ImageModal = ({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent
         showCloseButton={false}
-        aria-describedby={image.file_name}
+        aria-describedby={currentImage?.file_name}
         className="h-screen sm:max-w-full max-w-full bg-black/10 p-0"
         onKeyDown={(e) => {
           if (e.key === "ArrowRight") {
@@ -94,8 +93,8 @@ const ImageModal = ({
                     onAnimationEnd={() => setDirection(null)}
                   >
                     <img
-                      src={getBlobUrl(currentImage)}
-                      alt={image.file_name}
+                      src={currentImage.url}
+                      alt={currentImage.file_name}
                       className="w-full h-[95vh] object-contain"
                     />
 
@@ -104,7 +103,12 @@ const ImageModal = ({
                         type="button"
                         className="cursor-pointer flex items-center justify-center w-8 h-8 bg-transparent hover:bg-transparent text-foreground"
                         aria-label="Download Image"
-                        onClick={() => downloadBlob(currentImage)}
+                        onClick={() =>
+                          downloadImgURL(
+                            currentImage.url,
+                            currentImage.file_name,
+                          )
+                        }
                       >
                         <ArrowDownToLine className="size-5" />
                       </Button>

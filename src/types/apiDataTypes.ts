@@ -54,6 +54,10 @@ export interface foldersResponse {
   };
 }
 
+export interface imageResponse {
+  image: imageData;
+}
+
 export interface neighborsRes {
   prev?: { id: string };
   next?: { id: string };

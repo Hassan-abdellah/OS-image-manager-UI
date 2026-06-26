@@ -92,7 +92,6 @@ const FoldersGrid = ({
           </div>
         </div>
         {/* Grid system */}
-        {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-6"> */}
         <div
           className={clsx("grid", {
             "grid-cols-[repeat(auto-fill,120px)] justify-start gap-x-2 gap-y-4":

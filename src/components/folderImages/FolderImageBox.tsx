@@ -1,22 +1,9 @@
 import type { imageData } from "@/types/apiDataTypes";
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuGroup,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
-import {
-  ArrowDownToLine,
-  ExternalLink,
-  Scissors,
-  SquareCheck,
-  Trash2,
-} from "lucide-react";
+import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu";
+
 import { Fragment, useCallback, useMemo, useState } from "react";
 import DeleteModal from "../common/DeleteModal";
-import { useDeleteImage, useDownloadImage } from "@/hooks/useImages";
+import { useDeleteImage } from "@/hooks/useImages";
 import clsx from "clsx";
 import ImageModal from "./ImageModal";
 import { useDisplay } from "@/store/useDisplay";
@@ -24,6 +11,7 @@ import { getSizeWithUnit } from "@/utils/imagesUtils";
 import { format } from "date-fns";
 import { getErrorMessage } from "@/utils/apiErrorsUtils";
 import { toast } from "sonner";
+import FolderImageContextMenu from "./FolderImageContextMenu";
 const FolderImageBox = ({
   folderImage,
   imagesIds,
@@ -38,7 +26,6 @@ const FolderImageBox = ({
   const [isModal, setIsModal] = useState<boolean>(false);
   const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
   const { deleteImage, isPending: isDeleting } = useDeleteImage();
-  const { downloadImage, isPending: isDownloading } = useDownloadImage();
   const handleDeleteImage = useCallback(async () => {
     if (!folderImage.id) return;
     try {
@@ -76,7 +63,7 @@ const FolderImageBox = ({
             setIsModal(true);
           }}
           className={clsx(
-            "flex items-center rounded-lg cursor-pointer hover:bg-platinum dark:hover:bg-black/90",
+            "flex items-center  rounded-lg cursor-pointer hover:bg-platinum dark:hover:bg-black/90",
             {
               "flex-col gap-1 max-w-37.5 py-2": isGridView,
               "flex-row flex-wrap gap-x-2 gap-y-4 p-2": isListView,
@@ -101,63 +88,21 @@ const FolderImageBox = ({
 
           {/* size and time in list view only */}
           {isListView ? (
-            <div className="flex items-center gap-1 md:justify-end justify-start flex-1 md:text-base text-sm">
-              <span className="text-pale-slate-2">{imageSize}</span>
-              <span className="text-pale-slate">
-                {format(folderImage.createdAt, "dd-MM-yyyy hh:mm:ss")}
+            <div className="flex items-center gap-1 flex-wrap md:justify-end justify-start flex-1">
+              <span className="text-pale-slate text-xs">
+                {format(folderImage.createdAt, "dd/MM/yyyy hh:mm:ss a")}
               </span>
+              <span className="text-pale-slate-2 text-xs">{imageSize}</span>
             </div>
           ) : null}
         </ContextMenuTrigger>
-        <ContextMenuContent className="w-48">
-          {/* First Group */}
-          <ContextMenuGroup className="space-y-1">
-            <ContextMenuItem
-              className="cursor-pointer"
-              onClick={() => window.open(`${folderImage.url}`, "_blank")}
-            >
-              <ExternalLink />
-              <span>Open New Tab</span>
-            </ContextMenuItem>
-            <ContextMenuItem className="cursor-pointer">
-              <Scissors />
-              <span>Cut</span>
-            </ContextMenuItem>
-            <ContextMenuItem
-              className="cursor-pointer"
-              disabled={isDownloading}
-              onClick={async () =>
-                await downloadImage({
-                  imageId: folderImage.id,
-                  fileName: folderImage.original_name,
-                })
-              }
-            >
-              <ArrowDownToLine />
-              <span>Download</span>
-            </ContextMenuItem>
-            <ContextMenuItem
-              className="cursor-pointer"
-              onClick={() => handleSelectImage()}
-            >
-              <SquareCheck />
-              <span>Select</span>
-            </ContextMenuItem>
-          </ContextMenuGroup>
 
-          <ContextMenuSeparator />
-          {/* Second Group */}
-          <ContextMenuGroup>
-            <ContextMenuItem
-              variant="destructive"
-              className="cursor-pointer"
-              onClick={() => setIsDeleteModal(true)}
-            >
-              <Trash2 />
-              <span>Delete</span>
-            </ContextMenuItem>
-          </ContextMenuGroup>
-        </ContextMenuContent>
+        {/* Context Menu Body */}
+        <FolderImageContextMenu
+          image={folderImage}
+          handleSelectClick={() => handleSelectImage()}
+          handleDeleteClick={() => setIsDeleteModal(true)}
+        />
       </ContextMenu>
 
       {/* Delete Modal */}

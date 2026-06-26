@@ -23,15 +23,14 @@ const SingleFolderPage = () => {
 
   return (
     <section className="container py-8">
-      {isLoading ? (
-        <FoldersListLoader />
-      ) : (
-        <div className="flex flex-col gap-8">
-          {folderId ? <UploadImagesToFolderFom folderId={folderId} /> : null}
-
+      <div className="flex flex-col gap-8">
+        {folderId ? <UploadImagesToFolderFom folderId={folderId} /> : null}
+        {isLoading ? (
+          <FoldersListLoader />
+        ) : (
           <FoldersGrid folders={folders} folderImages={images} />
-        </div>
-      )}
+        )}
+      </div>
     </section>
   );
 };

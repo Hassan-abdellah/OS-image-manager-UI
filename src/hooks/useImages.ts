@@ -7,12 +7,12 @@ import {
   getImageNeighbors,
 } from "@/api/imagesAPI";
 import type {
+  imageData,
   neighborsParams,
   neighborsRes,
   paramsType,
 } from "@/types/apiDataTypes";
 import { useAuth } from "@clerk/react";
-import { downloadBlob } from "@/utils/imagesUtils";
 import { useState } from "react";
 
 // Centralized query key factory
@@ -31,7 +31,7 @@ export const useGetImage = (imageId: string, isEnabled: boolean = true) => {
   const { getApi } = useApi();
   const [dynamicId, setDynamicId] = useState<string>(imageId);
   // Stabilize params so the queryKey doesn't change every render
-  const query = useQuery<Blob>({
+  const query = useQuery<imageData>({
     queryKey: foldersKeys.details(dynamicId),
     queryFn: async () => getImage(await getApi(), dynamicId),
     enabled: isLoaded && !!isSignedIn && isEnabled,
@@ -47,30 +47,6 @@ export const useGetImage = (imageId: string, isEnabled: boolean = true) => {
     error: query.error,
     isError: query.isError,
     fetchImage: fetchImage,
-  };
-};
-// download Image
-export const useDownloadImage = () => {
-  const { getApi } = useApi();
-  // Stabilize params so the queryKey doesn't change every render
-  const mutation = useMutation({
-    mutationFn: async ({
-      imageId,
-      fileName,
-    }: {
-      imageId: string;
-      fileName?: string;
-    }) => {
-      const blob = await getImage(await getApi(), imageId);
-      downloadBlob(blob, fileName);
-    },
-  });
-
-  return {
-    downloadImage: mutation.mutateAsync,
-    isPending: mutation.isPending,
-    error: mutation.error,
-    isError: mutation.isError,
   };
 };
 

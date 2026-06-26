@@ -32,7 +32,7 @@ const FolderBox = ({ folder }: { folder: folderData }) => {
               to={`/folders/${folder.id}`}
               className={clsx("flex rounded-lg", {
                 "flex-col max-w-37.5": isGridView,
-                "flex-row gap-2 p-2 items-center hover:bg-platinum rounded-md":
+                "flex-row gap-2 p-2 items-center hover:bg-platinum dark:hover:bg-black/90 rounded-md":
                   isListView,
               })}
             >
@@ -54,7 +54,9 @@ const FolderBox = ({ folder }: { folder: folderData }) => {
               {/* size and time in list view only */}
               {isListView ? (
                 <div className="flex items-center gap-1 justify-end flex-1 text-pale-slate">
-                  <span>{format(folder.createdAt, "dd-MM-yyyy")}</span>
+                  <span className="text-xs">
+                    {format(folder.createdAt, "dd/MM/yyyy hh:mm:ss a")}
+                  </span>
                 </div>
               ) : null}
             </Link>
