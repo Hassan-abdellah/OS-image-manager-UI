@@ -58,34 +58,46 @@ const UploadImagesPreview = ({
           </div>
 
           {/* thumbnails */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {files.map((file, idx) => (
-              <div
-                key={`${file.file.name}-${idx}`}
-                className={clsx(
-                  "w-24 h-24 rounded-md cursor-pointer transition-colors duration-150 relative",
-                  {
-                    "border-2 border-foreground": currentSelection === file,
-                  },
-                )}
-                onClick={() => setSelectedImage(file)}
-              >
-                <img
-                  src={file.url}
-                  alt={file.file.name}
-                  className="w-full h-full rounded-md object-cover"
-                />
-
-                <Button
-                  type="button"
-                  aria-label="Remove File"
-                  className="bg-background p-0 m-0 absolute -top-2 -right-0.5 hover:bg-transparent text-foreground cursor-pointer border-foreground border-2 flex items-center justify-center h-4 w-4 rounded-full"
-                  onClick={() => removeFile(file)}
+          <div className="flex items-center gap-2 flex-wrap">
+            {files.map((file, idx) => {
+              const isFileSelected = currentSelection === file;
+              const isExceedsLimit = idx > 9;
+              return (
+                <div
+                  key={`${file.file.name}-${idx}`}
+                  className={clsx(
+                    "w-26 h-26 rounded-md cursor-pointer border-2 transition-colors duration-150 relative",
+                    {
+                      "border-destructive": isExceedsLimit,
+                      "border-foreground": isFileSelected,
+                      "border-transparent": !isFileSelected && !isExceedsLimit,
+                    },
+                  )}
+                  onClick={() => setSelectedImage(file)}
                 >
-                  <XIcon className="size-3" />
-                </Button>
-              </div>
-            ))}
+                  <img
+                    src={file.url}
+                    alt={file.file.name}
+                    className="w-full h-full rounded-md object-cover"
+                  />
+
+                  <Button
+                    type="button"
+                    aria-label="Remove File"
+                    className={clsx(
+                      "bg-background p-0 m-0 absolute -inset-2 translate-x-25 hover:bg-background cursor-pointer border-foreground border-2 flex items-center justify-center h-4 w-4 rounded-full",
+                      {
+                        "border-destructive text-destructive": isExceedsLimit,
+                        "text-foreground": !isExceedsLimit,
+                      },
+                    )}
+                    onClick={() => removeFile(file)}
+                  >
+                    <XIcon className="size-3" />
+                  </Button>
+                </div>
+              );
+            })}
           </div>
         </div>
         <DialogFooter className="border-t-0">
@@ -100,6 +112,7 @@ const UploadImagesPreview = ({
             form="upload-form"
             type="submit"
             className="px-6 py-4 bg-fresh-sky hover:bg-cerulean text-white transition-colors duration-200 flex items-center gap-1.5 cursor-pointer"
+            disabled={files.length > 10}
           >
             {isPending ? (
               <>
