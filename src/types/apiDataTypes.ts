@@ -1,7 +1,13 @@
+export interface folderChain {
+  id: string;
+  name: string;
+  parent_id: string | null;
+}
 export interface folderData {
   id: string;
   name: string;
   path: string;
+  path_chain: folderChain[];
   parent_id: string | null;
   createdAt: string;
   user_id: string;
