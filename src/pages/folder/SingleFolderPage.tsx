@@ -1,3 +1,4 @@
+import FolderBreadCrumb from "@/components/folders/FolderBreadCrumb";
 import FoldersGrid from "@/components/folders/FoldersGrid";
 import FoldersListLoader from "@/components/folders/FoldersListLoader";
 import UploadImagesToFolderFom from "@/components/folders/UploadImagesToFolderFom";
@@ -22,8 +23,9 @@ const SingleFolderPage = () => {
   }, [folder?.name, isLoading]);
 
   return (
-    <section className="container py-8">
+    <section className="container pb-8">
       <div className="flex flex-col gap-8">
+        {folder?.path ? <FolderBreadCrumb folderPath={folder?.path} /> : null}
         {folderId ? <UploadImagesToFolderFom folderId={folderId} /> : null}
         {isLoading ? (
           <FoldersListLoader />
