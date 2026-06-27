@@ -25,7 +25,9 @@ const SingleFolderPage = () => {
   return (
     <section className="container pb-8">
       <div className="flex flex-col gap-8">
-        {folder?.path ? <FolderBreadCrumb folderPath={folder?.path} /> : null}
+        {folder?.path ? (
+          <FolderBreadCrumb pathChain={folder?.path_chain} />
+        ) : null}
         {folderId ? <UploadImagesToFolderFom folderId={folderId} /> : null}
         {isLoading ? (
           <FoldersListLoader />

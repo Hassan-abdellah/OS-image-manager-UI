@@ -6,24 +6,35 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import type { folderChain } from "@/types/apiDataTypes";
 import { Fragment, useMemo } from "react";
-const FolderBreadCrumb = ({ folderPath }: { folderPath: string }) => {
-  const pathToArray: string[] = useMemo(() => {
-    return folderPath.split("/").map((item) => item.replaceAll("_", " "));
-  }, [folderPath]);
+import { Link } from "react-router";
+const FolderBreadCrumb = ({ pathChain }: { pathChain: folderChain[] }) => {
+  // modify the names
+  const pathToArray: folderChain[] = useMemo(() => {
+    return pathChain.map((item) => ({
+      ...item,
+      name: item.name.replaceAll("_", " "),
+    }));
+  }, [pathChain]);
 
   return (
     <Breadcrumb className="mt-4">
       <BreadcrumbList>
         {pathToArray.map((item, index) => {
           const isLastItem = index === pathToArray.length - 1;
+          const isFirstItem = index === 0;
           return (
-            <Fragment key={item}>
+            <Fragment key={item.id}>
               <BreadcrumbItem>
                 {isLastItem ? (
-                  <BreadcrumbPage>{item}</BreadcrumbPage>
+                  <BreadcrumbPage>{item.name}</BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink href="/">{item}</BreadcrumbLink>
+                  <BreadcrumbLink asChild>
+                    <Link to={isFirstItem ? "/" : `/folders/${item.id}`}>
+                      {item.name}
+                    </Link>
+                  </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
 
