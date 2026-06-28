@@ -2,6 +2,7 @@ import FolderBreadCrumb from "@/components/folders/FolderBreadCrumb";
 import FoldersGrid from "@/components/folders/FoldersGrid";
 import FoldersListLoader from "@/components/folders/FoldersListLoader";
 import UploadImagesToFolderFom from "@/components/folders/UploadImagesToFolderFom";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useFolders } from "@/hooks/useFolders";
 import { useSorting } from "@/store/useSorting";
 import { capitalizeString } from "@/utils";
@@ -25,7 +26,9 @@ const SingleFolderPage = () => {
   return (
     <section className="container pb-8">
       <div className="flex flex-col gap-8">
-        {folder?.path ? (
+        {isLoading ? (
+          <Skeleton className="h-6 rounded-lg w-1/2 mt-4" />
+        ) : folder?.path ? (
           <FolderBreadCrumb pathChain={folder?.path_chain} />
         ) : null}
         {folderId ? <UploadImagesToFolderFom folderId={folderId} /> : null}
