@@ -68,11 +68,11 @@ export const moveFolder = async (
 export const uploadFolderImages = (
   api: AxiosInstance,
   data: { folderId: string; images: File[] },
+  onProgress?: (progress: number) => void,
 ): Promise<folderData> => {
   const formData = new FormData();
-
   if (data.images.length > 0) {
-    Array.from(data.images).forEach((image) => {
+    data.images.forEach((image) => {
       formData.append("images", image);
     });
   }
@@ -80,6 +80,14 @@ export const uploadFolderImages = (
   return api.post(`${FOLDERSURL}/${data.folderId}/upload`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
+    },
+    onUploadProgress(progressEvent) {
+      if (progressEvent.total) {
+        const progress = Math.round(
+          (progressEvent.loaded / progressEvent.total) * 100,
+        );
+        onProgress?.(progress);
+      }
     },
   });
 };

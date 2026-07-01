@@ -12,6 +12,7 @@ import { Spinner } from "../ui/spinner";
 import { XIcon } from "lucide-react";
 import { revokeUrl } from "@/utils/imagesUtils";
 import type { modifiedFileType } from "@/types";
+import { Progress } from "../ui/progress";
 
 const UploadImagesPreview = ({
   isOpen,
@@ -19,12 +20,14 @@ const UploadImagesPreview = ({
   files,
   setFiles,
   isPending,
+  progress,
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   files: modifiedFileType[];
   setFiles: (files: modifiedFileType[]) => void;
   isPending: boolean;
+  progress: number;
 }) => {
   const [selectedImage, setSelectedImage] = useState<modifiedFileType>(
     files[0],
@@ -100,29 +103,37 @@ const UploadImagesPreview = ({
             })}
           </div>
         </div>
-        <DialogFooter className="border-t-0">
-          <Button
-            variant="outline"
-            className="cursor-pointer"
-            onClick={() => setIsOpen(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            form="upload-form"
-            type="submit"
-            className="px-6 py-4 bg-fresh-sky hover:bg-cerulean text-white transition-colors duration-200 flex items-center gap-1.5 cursor-pointer"
-            disabled={files.length > 10}
-          >
-            {isPending ? (
-              <>
-                <Spinner />
-                <span>Saving</span>
-              </>
-            ) : (
-              <span>Save changes</span>
-            )}
-          </Button>
+        <DialogFooter
+          className={clsx(
+            "border-t-0 sm:items-center items-stretch",
+            isPending && "sm:justify-between",
+          )}
+        >
+          {isPending && <Progress value={progress} />}
+          <div className="flex sm:flex-row flex-col sm:items-center items-stretch gap-2">
+            <Button
+              variant="outline"
+              className="cursor-pointer"
+              onClick={() => setIsOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              form="upload-form"
+              type="submit"
+              className="px-6 py-4 bg-fresh-sky hover:bg-cerulean text-white transition-colors duration-200 flex items-center gap-1.5 cursor-pointer"
+              disabled={files.length > 10}
+            >
+              {isPending ? (
+                <>
+                  <Spinner />
+                  <span>Saving</span>
+                </>
+              ) : (
+                <span>Save changes</span>
+              )}
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

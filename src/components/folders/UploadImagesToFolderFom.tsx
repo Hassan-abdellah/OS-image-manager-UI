@@ -13,7 +13,7 @@ const UploadImagesToFolderFom = ({ folderId }: { folderId: string }) => {
   const [isPreviewModal, setIsPreviewModal] = useState<boolean>(false);
   const [files, setFiles] = useState<modifiedFileType[]>([]);
 
-  const { uploadImages, isPending } = useUploadFolderImages();
+  const { uploadImages, isPending, progress } = useUploadFolderImages();
   const handleUpload = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!files?.length) return;
@@ -67,6 +67,7 @@ const UploadImagesToFolderFom = ({ folderId }: { folderId: string }) => {
           files={files}
           setFiles={setFiles}
           isPending={isPending}
+          progress={progress}
         />
       )}
     </Fragment>
