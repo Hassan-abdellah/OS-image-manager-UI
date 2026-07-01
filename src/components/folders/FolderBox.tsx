@@ -31,25 +31,33 @@ const FolderBox = ({ folder }: { folder: folderData }) => {
             <Link
               to={`/folders/${folder.id}`}
               className={clsx("flex rounded-lg", {
-                "flex-col max-w-37.5": isGridView,
-                "flex-row gap-2 p-2 items-center hover:bg-platinum dark:hover:bg-black/90 rounded-md":
+                "flex-col max-w-37.5 items-center": isGridView,
+                "md:flex-row md:items-center flex-col items-start gap-2 p-2  hover:bg-platinum dark:hover:bg-black/90 rounded-md":
                   isListView,
               })}
             >
-              <FoldersIcon
-                className={clsx({
-                  "w-20 h-20": isGridView,
-                  "w-5 h-5": isListView,
-                })}
-              />
-
-              <h5
-                className={clsx("capitalize", {
-                  "text-sm": isListView,
+              {/* left side */}
+              <div
+                className={clsx("flex items-center gap-2", {
+                  "flex-col": isGridView,
+                  "flex-row": isListView,
                 })}
               >
-                {folder.name.replaceAll("_", " ")}
-              </h5>
+                <FoldersIcon
+                  className={clsx({
+                    "w-20 h-20": isGridView,
+                    "w-5 h-5": isListView,
+                  })}
+                />
+
+                <h5
+                  className={clsx("capitalize text-center", {
+                    "text-sm": isListView,
+                  })}
+                >
+                  {folder.name.replaceAll("_", " ")}
+                </h5>
+              </div>
 
               {/* size and time in list view only */}
               {isListView ? (
