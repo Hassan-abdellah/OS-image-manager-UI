@@ -63,32 +63,41 @@ const FolderImageBox = ({
             setIsModal(true);
           }}
           className={clsx(
-            "flex items-center  rounded-lg cursor-pointer hover:bg-platinum dark:hover:bg-black/90",
+            "flex rounded-lg cursor-pointer hover:bg-platinum dark:hover:bg-black/90",
             {
-              "flex-col gap-1 max-w-37.5 py-2": isGridView,
-              "flex-row flex-wrap gap-x-2 gap-y-4 p-2": isListView,
+              "flex-col gap-1 max-w-37.5 py-2 items-center": isGridView,
+              "md:flex-row md:items-center flex-col items-start gap-x-2 gap-y-4 p-2":
+                isListView,
               "bg-platinum dark:bg-black/90   shadow-xs shadow-border":
                 isImageSelected,
             },
           )}
         >
-          <div className="bg-black/85">
-            <img
-              src={folderImage.url}
-              alt={folderImage.file_name}
-              className={clsx("object-contain", {
-                "w-20 h-20": isGridView,
-                "w-5 h-5": isListView,
-              })}
-            />
+          {/* left side */}
+          <div
+            className={clsx("flex items-center gap-2", {
+              "flex-col": isGridView,
+              "flex-row": isListView,
+            })}
+          >
+            <div className="bg-black/85">
+              <img
+                src={folderImage.url}
+                alt={folderImage.file_name}
+                className={clsx("object-contain", {
+                  "w-20 h-20": isGridView,
+                  "w-5 h-5": isListView,
+                })}
+              />
+            </div>
+            <h5 className="text-center md:text-base text-sm">
+              {folderImage.file_name}
+            </h5>
           </div>
-          <h5 className="text-center md:text-base text-sm">
-            {folderImage.file_name}
-          </h5>
 
           {/* size and time in list view only */}
           {isListView ? (
-            <div className="flex items-center gap-1 flex-wrap md:justify-end justify-start flex-1">
+            <div className="flex items-center gap-1 md:justify-end justify-start md:flex-1 flex-none">
               <span className="text-pale-slate text-xs">
                 {format(folderImage.createdAt, "dd/MM/yyyy hh:mm:ss a")}
               </span>
