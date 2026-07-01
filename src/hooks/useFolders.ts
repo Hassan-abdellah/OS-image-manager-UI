@@ -22,6 +22,7 @@ import {
   renameFolder,
   uploadFolderImages,
 } from "@/api/folder";
+import { useState } from "react";
 
 // Centralized query key factory
 export const foldersKeys = {
@@ -174,7 +175,7 @@ export const useMoveFolder = () => {
 export const useUploadFolderImages = () => {
   const { getApi } = useApi();
   const queryClient = useQueryClient();
-
+  const [progress, setProgress] = useState<number>(0);
   const mutation = useMutation({
     mutationFn: async ({
       images,
@@ -182,7 +183,18 @@ export const useUploadFolderImages = () => {
     }: {
       images: File[];
       folderId: string;
-    }) => uploadFolderImages(await getApi(), { folderId, images }),
+    }) =>
+      uploadFolderImages(
+        await getApi(),
+        {
+          folderId,
+          images,
+        },
+        setProgress,
+      ),
+    onMutate: () => {
+      setProgress(0);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: foldersKeys.base() });
     },
@@ -193,6 +205,7 @@ export const useUploadFolderImages = () => {
     isPending: mutation.isPending,
     error: mutation.error,
     isError: mutation.isError,
+    progress,
   };
 };
 
